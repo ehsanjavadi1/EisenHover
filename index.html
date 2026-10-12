@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyEisen | مدیریت هوشمند وظایف</title>
+    <!-- فونت وزیرمتن -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        :root {
+            /* Dark Theme (Default) */
+            --bg-body: #0f1117;
+            --bg-card: #1a1d27;
+            --bg-card-hover: #222633;
+            --bg-input: #12141c;
+            --text-main: #ffffff;
+            --text-muted: #8b92a5;
+            --border-color: #2a2f3d;
+            --green: #22c55e;
+            --green-glow: rgba(34, 197, 94, 0.15);
+            --yellow: #eab308;
+            --yellow-glow: rgba(234, 179, 8, 0.15);
+            --orange: #f97316;
+            --orange-glow: rgba(249, 115, 22, 0.15);
+            --red: #ef4444;
+            --red-glow: rgba(239, 68, 68, 0.15);
+            --accent: #6366f1;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.3);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.4);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.light-mode {
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f8f9fa;
+            --bg-input: #e9ecef;
+            --text-main: #1a1d27;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --green-glow: rgba(34, 197, 94, 0.1);
+            --yellow-glow: rgba(234, 179, 8, 0.1);
+            --orange-glow: rgba(249, 115, 22, 0.1);
+            --red-glow: rgba(239, 68, 68, 0.1);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Vazirmatn', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            transition: var(--transition);
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--green-glow) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, var(--accent) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* --- Header --- */
+        .header-container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 50;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--green), var(--accent));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 12px var(--green-glow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* --- Main Title --- */
+        .main-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 0.95rem;
+        }
+
+        /* --- Matrix Grid --- */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .axis-label {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .axis-top-left { top: -22px; right: 0; }
+        .axis-top-right { top: -22px; left: 0; }
+        .axis-left-vertical { 
+            right: -25px; 
+            top: 50%; 
+            transform: rotate(-90deg) translateY(-50%);
+            transform-origin: center;
+            white-space: nowrap;
+        }
+
+        .matrix-box {
+            background-color: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            max-height: 320px;
+            position: relative;
+        }
+
+        .matrix-box:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .box-header {
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .box-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .box-header .count {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .bg-green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .bg-yellow { background: linear-gradient(135deg, #eab308, #ca8a04); }
+        .bg-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .bg-red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .box-content {
+            padding: 12px;
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background-color: var(--bg-card);
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+
+        .box-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .box-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .box-content::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 10px;
+        }
+        .box-content::-webkit-scrollbar-thumb:hover {
+            background-color: var(--text-muted);
+        }
+
+        .task-item {
+            background-color: var(--bg-body);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            cursor: grab;
+            animation: slideIn 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-item:active {
+            cursor: grabbing;
+        }
+
+        .task-item:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .task-item.completed {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .task-text {
+            flex-grow: 1;
+            margin-left: 10px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .task-item:hover .task-actions {
+            opacity: 1;
+        }
+
+        .task-actions button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            color: var(--text-muted);
+        }
+
+        .task-actions .done-btn:hover { background: var(--green-glow); color: var(--green); }
+        .task-actions .delete-btn:hover { background: var(--red-glow); color: var(--red); }
+
+        /* --- Add Task Input --- */
+        .add-task-container {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--bg-card);
+            padding: 12px;
+            border-radius: var(--radius-lg);
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .add-task-container:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .add-task-input {
+            flex-grow: 1;
+            background-color: var(--bg-input);
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .add-task-input:focus {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+        }
+
+        .category-select {
+            background-color: var(--bg-input);
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .category-select:focus {
+            border-color: var(--border-color);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--accent), #4f46e5);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-weight: 600;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .add-btn:active {
+            transform: translateY(0);
+        }
+
+        /* --- Modal Overlay --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Profile Modal --- */
+        .profile-modal {
+            background-color: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .profile-modal {
+            transform: translateY(0) scale(1);
+        }
+
+        .profile-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-header h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .close-modal-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            display: flex;
+            transition: var(--transition);
+        }
+
+        .close-modal-btn:hover {
+            background: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .avatar-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-body);
+            box-shadow: var(--shadow-md);
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            border: 3px solid var(--bg-card);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .avatar-upload-btn input {
+            display: none;
+        }
+
+        .profile-input-group {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .profile-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .profile-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .profile-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-primary { 
+            background: var(--accent); 
+            color: white; 
+        }
+        .btn-primary:hover { 
+            background: #4f46e5; 
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+        .btn-secondary { 
+            background: var(--bg-input); 
+            color: var(--text-main); 
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { 
+            background: var(--border-color); 
+        }
+
+        /* --- Data Management Section --- */
+        .data-management {
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-management h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .data-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .data-btn {
+            flex: 1;
+            min-width: 100px;
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .data-btn.danger {
+            background: var(--red);
+            color: white;
+            border: none;
+        }
+
+        .data-btn.danger:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        /* --- Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            color: var(--text-main);
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            animation: slideInLeft 0.3s ease;
+            border-left: 4px solid var(--accent);
+            max-width: 320px;
+        }
+
+        .toast.success { border-left-color: var(--green); }
+        .toast.error { border-left-color: var(--red); }
+        .toast.info { border-left-color: var(--accent); }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(-20px); }
+        }
+
+        /* --- Footer --- */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .footer .heart {
+            color: var(--red);
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* --- Icons --- */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-sm { width: 16px; height: 16px; }
+
+        /* --- Empty State --- */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 10px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-align: center;
+            gap: 8px;
+            opacity: 0.6;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            
+            .matrix-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .axis-left-vertical { display: none; }
+            
+            .axis-top-left, .axis-top-right {
+                position: static;
+                display: block;
+                text-align: center;
+                margin-bottom: 5px;
+            }
+            
+            .axis-top-right { display: none; }
+
+            .main-title { font-size: 2rem; }
+            .logo { font-size: 1.2rem; }
+
+            .add-task-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .add-btn { width: 100%; justify-content: center; }
+
+            .matrix-box { max-height: 280px; }
+
+            .toast-container {
+                bottom: 16px;
+                left: 16px;
+                right: 16px;
+            }
+
+            .profile-modal {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header-container">
+        <div class="logo-wrapper">
+            <div class="logo-icon">
+                <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+            </div>
+            <div class="logo">DailyEisen</div>
+        </div>
+        <div class="top-actions">
+            <button class="icon-btn" id="themeToggle" title="تغییر تم">
+                <svg class="icon" id="themeIcon" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </button>
+            <button class="icon-btn" id="profileBtn" title="پروفایل">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Title -->
+    <h1 class="main-title">DailyEisen</h1>
+    <p class="subtitle">مدیریت هوشمند وظایف با ماتریس آیزنهاور</p>
+
+    <!-- Matrix Grid -->
+    <div class="matrix-container">
+        <span class="axis-label axis-top-left">فوری</span>
+        <span class="axis-label axis-top-right">غیر فوری</span>
+        <span class="axis-label axis-left-vertical">مهم</span>
+
+        <!-- Box 1: Do It -->
+        <div class="matrix-box" data-category="do">
+            <div class="box-header bg-green">
+                <span>انجامش بده (Do it)</span>
+                <span class="count" id="count-do">0</span>
+            </div>
+            <div class="box-content" id="list-do" data-category="do"></div>
+        </div>
+
+        <!-- Box 2: Decide -->
+        <div class="matrix-box" data-category="decide">
+            <div class="box-header bg-yellow">
+                <span>تصمیم بگیر (Decide)</span>
+                <span class="count" id="count-decide">0</span>
+            </div>
+            <div class="box-content" id="list-decide" data-category="decide"></div>
+        </div>
+
+        <!-- Box 3: Delegate -->
+        <div class="matrix-box" data-category="delegate">
+            <div class="box-header bg-orange">
+                <span>واگذار کن (Delegate)</span>
+                <span class="count" id="count-delegate">0</span>
+            </div>
+            <div class="box-content" id="list-delegate" data-category="delegate"></div>
+        </div>
+
+        <!-- Box 4: Delete -->
+        <div class="matrix-box" data-category="delete">
+            <div class="box-header bg-red">
+                <span>حذفش کن (Delete)</span>
+                <span class="count" id="count-delete">0</span>
+            </div>
+            <div class="box-content" id="list-delete" data-category="delete"></div>
+        </div>
+    </div>
+
+    <!-- Add Task Input -->
+    <div class="add-task-container">
+        <input type="text" class="add-task-input" id="taskInput" placeholder="یک کار جدید بنویس...">
+        <select class="category-select" id="taskCategory">
+            <option value="do">انجامش بده</option>
+            <option value="decide">تصمیم بگیر</option>
+            <option value="delegate">واگذار کن</option>
+            <option value="delete">حذفش کن</option>
+        </select>
+        <button class="add-btn" id="addTaskBtn">
+            <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" /></svg>
+            <span style="font-family: vazir;">افزودن</span>
+        </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Developed by @ehsanjavadip & @Alizadev with <span class="heart">❤</span><br>
+        V 1.0.0.0 ©
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileOverlay">
+        <div class="profile-modal">
+            <div class="profile-header">
+                <h3>پروفایل کاربری</h3>
+                <button class="close-modal-btn" id="closeProfileBtn">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div class="avatar-container">
+                <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="profile-img" id="profileImg">
+                <label class="avatar-upload-btn" title="تغییر عکس">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    <input type="file" accept="image/*" id="avatarUpload">
+                </label>
+            </div>
+
+            <div class="profile-input-group">
+                <label>نام نمایشی</label>
+                <input type="text" class="profile-input" id="profileName" value="Esi Khatar (Barfi)" placeholder="نام خود را وارد کنید">
+            </div>
+
+            <div class="profile-input-group">
+                <label>بیوگرافی</label>
+                <input type="text" class="profile-input" id="profileBio" value="این قسمت همین اطلاعاتی که خودت زدی عالیه" placeholder="درباره خودت بنویس">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelProfile">انصراف</button>
+                <button class="btn btn-primary" id="saveProfile">ذخیره تغییرات</button>
+            </div>
+
+            <!-- Data Management -->
+            <div class="data-management">
+                <h4>مدیریت داده‌ها</h4>
+                <div class="data-buttons">
+                    <button class="btn btn-secondary data-btn" id="exportData">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        خروجی
+                    </button>
+                    <button class="btn btn-secondary data-btn" id="importData">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 14v-6m0 0l-3 3m3-3l3 3M4 4h16v16H4z" /></svg>
+                        ورودی
+                    </button>
+                    <button class="btn data-btn danger" id="clearAllData">
+                        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        پاک کردن
+                    </button>
+                </div>
+                <input type="file" id="importFile" accept=".json" style="display:none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // State Management
+        // ============================================
+        const state = {
+            tasks: {
+                do: [],
+                decide: [],
+                delegate: [],
+                delete: []
+            },
+            profile: {
+                name: 'Esi Khatar (Barfi)',
+                bio: 'این قسمت همین اطلاعاتی که خودت زدی عالیه',
+                avatar: 'https://i.pravatar.cc/150?img=11'
+            },
+            theme: 'dark'
+        };
+
+        // ============================================
+        // LocalStorage
+        // ============================================
+        function saveState() {
+            try {
+                localStorage.setItem('dailyEisenState', JSON.stringify(state));
+            } catch (e) {
+                console.error('Error saving state:', e);
+                showToast('خطا در ذخیره‌سازی داده‌ها', 'error');
+            }
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('dailyEisenState');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.tasks) state.tasks = { ...state.tasks, ...parsed.tasks };
+                    if (parsed.profile) state.profile = { ...state.profile, ...parsed.profile };
+                    if (parsed.theme) state.theme = parsed.theme;
+                } catch (e) {
+                    console.error('Error loading state:', e);
+                }
+            }
+        }
+
+        // ============================================
+        // Toast Notifications
+        // ============================================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>',
+                error: '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>',
+                info: '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+            };
+            
+            toast.innerHTML = `${icons[type]}<span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ============================================
+        // Render Tasks
+        // ============================================
+        function renderTasks() {
+            Object.keys(state.tasks).forEach(category => {
+                const listEl = document.getElementById(`list-${category}`);
+                const countEl = document.getElementById(`count-${category}`);
+                const tasks = state.tasks[category];
+                
+                countEl.textContent = tasks.length;
+
+                if (tasks.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <svg class="icon" viewBox="0 0 24 24" style="width:32px;height:32px;opacity:0.3;"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                            <span>هنوز کاری اینجا نیست</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = tasks.map(task => `
+                    <div class="task-item ${task.completed ? 'completed' : ''}" draggable="true" data-id="${task.id}" data-category="${category}">
+                        <span class="task-text">${escapeHtml(task.text)}</span>
+                        <div class="task-actions">
+                            <button class="done-btn" onclick="toggleTask('${category}', ${task.id})" title="انجام شد">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
+                            </button>
+                            <button class="delete-btn" onclick="deleteTask('${category}', ${task.id})" title="حذف">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                attachDragEvents(listEl);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ============================================
+        // Task Operations
+        // ============================================
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const category = document.getElementById('taskCategory').value;
+            const text = input.value.trim();
+
+            if (!text) {
+                showToast('لطفا متن کار را وارد کنید', 'error');
+                input.focus();
+                return;
+            }
+
+            const task = {
+                id: Date.now(),
+                text: text,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            state.tasks[category].push(task);
+            input.value = '';
+            sessionStorage.removeItem('dailyEisen_draft_task');
+            saveState();
+            renderTasks();
+            showToast('کار با موفقیت اضافه شد', 'success');
+        }
+
+        function toggleTask(category, id) {
+            const task = state.tasks[category].find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveState();
+                renderTasks();
+                if (task.completed) showToast('کار انجام شد! 🎉', 'success');
+            }
+        }
+
+        function deleteTask(category, id) {
+            state.tasks[category] = state.tasks[category].filter(t => t.id !== id);
+            saveState();
+            renderTasks();
+            showToast('کار حذف شد', 'info');
+        }
+
+        // ============================================
+        // Drag & Drop
+        // ============================================
+        let draggedTask = null;
+
+        function attachDragEvents(container) {
+            const tasks = container.querySelectorAll('.task-item');
+            
+            tasks.forEach(task => {
+                task.addEventListener('dragstart', (e) => {
+                    draggedTask = {
+                        id: parseInt(task.dataset.id),
+                        category: task.dataset.category
+                    };
+                    task.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                task.addEventListener('dragend', () => {
+                    task.classList.remove('dragging');
+                    document.querySelectorAll('.box-content').forEach(el => el.classList.remove('drag-over'));
+                });
+            });
+        }
+
+        document.querySelectorAll('.box-content').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.classList.add('drag-over');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('drag-over');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                
+                if (!draggedTask) return;
+                
+                const newCategory = zone.dataset.category;
+                if (draggedTask.category === newCategory) return;
+
+                const taskIndex = state.tasks[draggedTask.category].findIndex(t => t.id === draggedTask.id);
+                if (taskIndex === -1) return;
+
+                const [task] = state.tasks[draggedTask.category].splice(taskIndex, 1);
+                state.tasks[newCategory].push(task);
+                
+                saveState();
+                renderTasks();
+                showToast('کار جابجا شد', 'success');
+                draggedTask = null;
+            });
+        });
+
+        // ============================================
+        // Profile Management
+        // ============================================
+        function openProfileModal() {
+            document.getElementById('profileOverlay').classList.add('active');
+            document.getElementById('profileName').value = state.profile.name;
+            document.getElementById('profileBio').value = state.profile.bio;
+            document.getElementById('profileImg').src = state.profile.avatar;
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileOverlay').classList.remove('active');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('profileName').value.trim();
+            const bio = document.getElementById('profileBio').value.trim();
+
+            if (!name) {
+                showToast('نام نمی‌تواند خالی باشد', 'error');
+                return;
+            }
+
+            state.profile.name = name;
+            state.profile.bio = bio;
+            saveState();
+            closeProfileModal();
+            showToast('پروفایل با موفقیت ذخیره شد', 'success');
+        }
+
+        // ============================================
+        // Theme Management
+        // ============================================
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.body.classList.toggle('light-mode', state.theme === 'light');
+            
+            const icon = document.getElementById('themeIcon');
+            if (state.theme === 'light') {
+                icon.innerHTML = '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+            } else {
+                icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+            }
+            
+            saveState();
+            showToast(`تم ${state.theme === 'dark' ? 'تاریک' : 'روشن'} فعال شد`, 'info');
+        }
+
+        // ============================================
+        // Data Export / Import / Clear
+        // ============================================
+        function exportData() {
+            const dataStr = JSON.stringify(state, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dailyEisen-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('فایل خروجی دانلود شد', 'success');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    if (!imported.tasks || !imported.profile) {
+                        throw new Error('ساختار فایل نامعتبر است');
+                    }
+
+                    state.tasks = { ...state.tasks, ...imported.tasks };
+                    state.profile = { ...state.profile, ...imported.profile };
+                    if (imported.theme) state.theme = imported.theme;
+
+                    saveState();
+                    
+                    document.body.classList.toggle('light-mode', state.theme === 'light');
+                    const icon = document.getElementById('themeIcon');
+                    if (state.theme === 'light') {
+                        icon.innerHTML = '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+                    } else {
+                        icon.innerHTML = '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />';
+                    }
+                    
+                    renderTasks();
+                    closeProfileModal();
+                    showToast('داده‌ها با موفقیت وارد شد', 'success');
+                } catch (err) {
+                    showToast('خطا در خواندن فایل: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function clearAllData() {
+            if (!confirm('آیا مطمئنی می‌خوای همه داده‌ها پاک بشن؟ این عمل قابل بازگشت نیست!')) return;
+            
+            state.tasks = { do: [], decide: [], delegate: [], delete: [] };
+            state.profile = {
+                name: 'Esi Khatar (Barfi)',
+                bio: 'این قسمت همین اطلاعاتی که خودت زدی عالیه',
+                avatar: 'https://i.pravatar.cc/150?img=11'
+            };
+            
+            localStorage.removeItem('dailyEisenState');
+            sessionStorage.removeItem('dailyEisen_draft_task');
+            saveState();
+            renderTasks();
+            
+            document.getElementById('profileImg').src = state.profile.avatar;
+            document.getElementById('profileName').value = state.profile.name;
+            document.getElementById('profileBio').value = state.profile.bio;
+            document.getElementById('taskInput').value = '';
+            
+            showToast('همه داده‌ها پاک شدند', 'info');
+            closeProfileModal();
+        }
+
+        // ============================================
+        // Auto-save Draft (sessionStorage)
+        // ============================================
+        function setupAutoSave() {
+            const taskInput = document.getElementById('taskInput');
+
+            taskInput.addEventListener('input', () => {
+                sessionStorage.setItem('dailyEisen_draft_task', taskInput.value);
+            });
+
+            const draft = sessionStorage.getItem('dailyEisen_draft_task');
+            if (draft) taskInput.value = draft;
+        }
+
+        // ============================================
+        // Event Listeners
+        // ============================================
+        document.getElementById('addTaskBtn').addEventListener('click', addTask);
+        document.getElementById('taskInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        document.getElementById('profileBtn').addEventListener('click', openProfileModal);
+        document.getElementById('closeProfileBtn').addEventListener('click', closeProfileModal);
+        document.getElementById('cancelProfile').addEventListener('click', closeProfileModal);
+        document.getElementById('saveProfile').addEventListener('click', saveProfile);
+        
+        document.getElementById('profileOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'profileOverlay') closeProfileModal();
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        document.getElementById('avatarUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    state.profile.avatar = event.target.result;
+                    document.getElementById('profileImg').src = event.target.result;
+                    saveState();
+                    showToast('عکس پروفایل تغییر کرد', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('exportData').addEventListener('click', exportData);
+        document.getElementById('importData').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+        document.getElementById('importFile').addEventListener('change', importData);
+        document.getElementById('clearAllData').addEventListener('click', clearAllData);
+
+        // Keyboard shortcut: Escape to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeProfileModal();
+        });
+
+        // ============================================
+        // Initialize
+        // ============================================
+        function init() {
+            loadState();
+            
+            if (state.theme === 'light') {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeIcon').innerHTML = '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />';
+            }
+
+            if (Object.values(state.tasks).every(arr => arr.length === 0)) {
+                state.tasks.do = [
+                    // { id: 1, text: 'build project with dailyUI', completed: false, createdAt: new Date().toISOString() },
+                    // { id: 2, text: 'Write Todo List for this week', completed: false, createdAt: new Date().toISOString() },
+                    // { id: 3, text: 'Design figma file for web project', completed: false, createdAt: new Date().toISOString() }
+                ];
+                saveState();
+            }
+
+            renderTasks();
+            setupAutoSave();
+        }
+
+        init();
+    </script>
+</body>
+</html>
